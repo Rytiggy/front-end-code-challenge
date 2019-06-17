@@ -17,7 +17,7 @@ export default {
   },
   mounted () {
     this.$axios
-      .get("localhost:3000/api/locations/")
+      .get("http://localhost:3001/api/locations/")
       .then(response => (this.info = response));
   }
 };
