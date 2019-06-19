@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": false,
   "scripts": {
-    "start": "concurrently --raw \"npm run local-data-server\" \"npm run webpack-server\"",
+    "start": "concurrently --raw \"npm run local-data-server\" \"cd client && quasar dev\"",
     "webpack-server": "webpack-dev-server",
     "local-data-server": "node ./api/server.js"
   },
