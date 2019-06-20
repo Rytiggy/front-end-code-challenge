@@ -11,4 +11,4 @@ app.use(cors());
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: false}))
 app.use('/api/locations', locations)
-app.listen(3001)
+app.listen(process.env.PORT || 3001)
