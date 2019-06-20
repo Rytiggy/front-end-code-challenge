@@ -1,3 +1,7 @@
+## Frontend UI:
+
+![](https://media.giphy.com/media/U2MCZjKrMOvrDS2nnE/giphy.gif)
+
 Roomkey Front End Development Challenge
 ========================================
 
