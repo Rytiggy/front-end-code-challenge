@@ -36,7 +36,11 @@ module.exports = function (ctx) {
         "QItemLabel",
         "QInput",
         "QSeparator",
-        "QSelect"
+        "QSelect",
+        "QImg",
+        "QDate",
+        "QMenu",
+        "QRating"
       ],
 
       directives: ["Ripple"],

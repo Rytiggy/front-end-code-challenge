@@ -15,6 +15,15 @@
         @update:bounds="boundsUpdated"
       >
         <l-tile-layer :url="url"></l-tile-layer>
+        <l-marker :lat-lng="[lat, lng]">
+          <l-popup>Hello!</l-popup>
+        </l-marker>    
+        <l-marker v-for="(hotel, hotelIndex) in hotels" :key="hotelIndex" :lat-lng="[hotel.lat, hotel.lng]">
+          <l-popup>
+            <b>{{ hotel.name }}</b> 
+            <span v-if="hotel.nightly_rate"> {{roundTo(hotel.nightly_rate)}}</span>
+          </l-popup>
+        </l-marker>
       </l-map>
     </div>
   <!-- </div> -->
@@ -23,7 +32,7 @@
 <script>
 
 export default {
-  props: ["lat","lng"],
+  props: ["lat","lng", "hotels"],
   data () {
     return {
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
@@ -40,6 +49,13 @@ export default {
     },
     boundsUpdated (bounds) {
       this.bounds = bounds;
+    },
+    roundTo(num){
+      if(num) {
+        return `$${num.toFixed(2)}`;
+      } else {
+        return "$---.--"
+      }
     }
   }
 }

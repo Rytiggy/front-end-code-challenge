@@ -2,7 +2,7 @@
   "name": "client",
   "version": "0.0.1",
   "description": "Roomkey Front End Development Challenge",
-  "productName": "Quasar App",
+  "productName": "Front End Development Challenge",
   "cordovaId": "org.cordova.quasar.app",
   "author": "Ryan Mason <ryanmasonjar@gmail.com>",
   "private": true,

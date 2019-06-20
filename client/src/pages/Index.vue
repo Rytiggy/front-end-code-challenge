@@ -1,80 +1,92 @@
 <template>
   <q-page>
-    <div class="row window-height">
-      <div class="col-4">
-        <div class="row bordered">
-          <div class="col-12">
-            <q-select
-              v-model="search"
-              use-input
-              hide-selected
-              fill-input
-              input-debounce="0"
-              label="Search"
-              :options="cities"
-              @filter="filterFn"
-              @filter-abort="abortFilterFn"
-              color="accent"
-              square
-              class="q-pa-sm"
-              :rules="[val => !!val || 'Field is required']"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    No results
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
-          </div>
-          <div class="col-12">
-            <q-input
-              color="accent"
-              square
-              v-model="arives"
-              type="date"
-              class="q-pa-sm"
-              :rules="[val => !!val || 'Field is required']"
-            />
-          </div>
-          <div class="col-12">
-            <q-input
-              color="accent"
-              square
-              v-model="departs"
-              type="date"
-              class="q-pa-sm"
-              :rules="[val => !!val || 'Field is required']"
-            />
-          </div>
-          <div class="col-12">
-            <q-btn
-              class="fit"
-              flat
-              color="accent"
-              label="Search"
-              v-on:click="searchHotels"
-            />
-          </div>
+    <q-header class="bg-white text-grey-9" bordered>
+      <div class="row q-px-sm">
+        <div class="col-xs-12 col-sm-12 col-md-8">
+          <q-select
+            v-model="search"
+            use-input
+            hide-selected
+            fill-input
+            input-debounce="0"
+            label="Search"
+            :options="cities"
+            @filter="filterFn"
+            @filter-abort="abortFilterFn"
+            color="accent"
+            square
+            outlined
+            :rules="[val => !!val || 'Field is required']"
+            class="q-py-sm input-branding"
+          >
+            <template v-slot:no-option>
+              <q-item>
+                <q-item-section class="text-grey">No results</q-item-section>
+              </q-item>
+            </template>
+          </q-select>
         </div>
+        <div class="col-xs-9 col-sm-10 col-md-3">
+          <q-input
+            color="accent"
+            square
+            outlined
+            v-model="arivalAndDepature"
+            type="text"
+            :rules="[val => !!val || 'Field is required']"
+            class="q-py-sm input-branding"
+          >
+            <q-menu>
+              <div class="row">
+                <div class="col-6 q-pa-sm">
+                  <div class="text-h6">Arives at {{arives}}</div>
+                  <q-date v-model="arives" mask="YYYY-MM-DD" color="accent"/>
+                </div>
+                <div class="col-6 q-pa-sm">
+                  <div class="text-h6">Departs at {{departs}}</div>
+                  <q-date v-model="departs" mask="YYYY-MM-DD" color="accent"/>
+                </div>
+              </div>
+            </q-menu>
+          </q-input>
+        </div>
+        <div class="col-xs-3 col-sm-2 col-md-1">
+          <q-btn class="fit" flat color="accent" label="Search" v-on:click="searchHotels"/>
+        </div>
+      </div>
+    </q-header>
+
+    <div class="row">
+      <div class="col-sm-12 col-md-5">
+        <div class="row bordered"></div>
         <div class="hotel-scroller">
-          <div v-for="(hotel, index) in hotels" :key="index" >
-            <!-- {{hotel}} -->
-            <div
-              v-ripple="{ color: 'accent' }"
-              class="relative-position q-pa-md cursor-pointer"
-              v-on:click="selectHotel(hotel)"
-            >
-              <div class="text-h6 text-accent">{{ hotel.name }}</div>
-              {{ hotel.short_description }}
+          <div
+            v-on:click="selectHotel(hotel)"
+            v-ripple="{ color: 'accent' }"
+            class="relative-position q-pa-md cursor-pointer row"
+            v-for="(hotel, index) in hotels"
+            :key="index"
+          >
+            <div class="col-4 text-center">
+              <q-img :src="hotel.photos[0].url" spinner-color="white" :ratio="4/3"/>
+              <q-rating v-model="hotel.stars" size="2em" color="accent" readonly/>
             </div>
-              <q-separator inset />
+            <div class="col-5 q-px-sm">
+              <div>
+                <div class="text-h6 text-accent ellipsis">{{ hotel.name }}</div>
+              </div>
+            </div>
+            <div class="col-3 q-px-sm text-right">
+              <q-btn color="accent">
+                <div class="text-h6">{{roundTo(hotel.nightly_rate)}}</div>
+              </q-btn>
+            </div>
+            <q-separator inset/>
           </div>
         </div>
       </div>
-      <div class="col-8">
-        <MapView :lat="lat" :lng="lng"/>
+      <div class="col-md-7 gt-sm">
+        <MapView :lat="lat" :lng="lng" :hotels="hotels"/>
       </div>
     </div>
   </q-page>
@@ -93,9 +105,9 @@ export default {
   data() {
     return {
       mapData: [],
-      search: "",
-      arives: "",
-      departs: "",
+      search: "Charlottesville",
+      arives: "2019-08-14",
+      departs: "2019-08-29",
       cities: [],
       hotels: [],
       lat: 38.04671096801758,
@@ -103,83 +115,113 @@ export default {
     };
   },
   mounted() {
-    this.$axios
-      .get("http://localhost:3001/api/locations/")
-      .then(response => {
-        this.mapData = response.data;
-        this.cities = this.mapData.map(city => city.name);
-      });
-    //set URL prams to values  
-    this.search = this.$route.query.q;
-    this.arives = this.$route.query.arives;
-    this.departs = this.$route.query.departs;
-    if(  this.search
-      || this.arives
-      || this.departs)
-    {
-      this.searchHotels() 
+    this.$axios.get("http://localhost:3001/api/locations/").then(response => {
+      this.mapData = response.data;
+      this.cities = this.mapData.map(city => city.name);
+    });
+    //set URL prams to values
+    if (
+      this.$route.query.q ||
+      this.$route.query.arives ||
+      this.$route.query.arives
+    ) {
+      this.search = this.$route.query.q;
+      this.arives = this.$route.query.arives;
+      this.departs = this.$route.query.departs;
+    }
+    if (this.search || this.arives || this.departs) {
+      this.searchHotels();
+    }
+  },
+  computed: {
+    // a computed getter
+    arivalAndDepature: function() {
+      // `this` points to the vm instance
+      return `Arives: ${this.arives} - Departs: ${this.departs}`;
     }
   },
   watch: {
-    // watch for input and set to URL prams 
+    // watch for input and set to URL prams
     search() {
       this.$router.push({
-        path: '/',
-        query: { ...this.$route.query, q: this.search },
+        path: "/",
+        query: { ...this.$route.query, q: this.search }
       });
     },
     arives() {
       this.$router.push({
-        path: '/',
-        query: { ...this.$route.query, arives: this.arives },
+        path: "/",
+        query: { ...this.$route.query, arives: this.arives }
       });
     },
     departs() {
       this.$router.push({
-        path: '/',
-        query: { ...this.$route.query, departs: this.departs },
+        path: "/",
+        query: { ...this.$route.query, departs: this.departs }
       });
-    },
+    }
   },
   methods: {
-    filterFn (val, update) {
+    filterFn(val, update) {
       setTimeout(() => {
         update(() => {
-          if (val === '') {
+          if (val === "") {
             this.cities = this.mapData.map(city => city.name);
+          } else {
+            const needle = val.toLowerCase();
+            this.cities = this.cities.filter(
+              v => v.toLowerCase().indexOf(needle) > -1
+            );
           }
-          else {
-            const needle = val.toLowerCase()
-            this.cities = this.cities.filter(v => v.toLowerCase().indexOf(needle) > -1)
-          }
-        })
-      }, 500)
+        });
+      }, 500);
     },
-    abortFilterFn () {
-      console.log('delayed filter aborted')
+    abortFilterFn() {
+      console.log("delayed filter aborted");
     },
     searchHotels() {
-      if(this.search == "" || !this.search || this.arives == "" || !this.arives || this.departs == "" || !this.departs) {
+      if (
+        this.search == "" ||
+        !this.search ||
+        this.arives == "" ||
+        !this.arives ||
+        this.departs == "" ||
+        !this.departs
+      ) {
         this.$q.notify({
-          message: 'Invalid search parameters',
-          color: 'negative'
+          message: "Invalid search parameters",
+          color: "negative"
         });
       } else {
-        const url = `http://localhost:3000/api/locations/${this.search.toLowerCase()}/hotels?checkin=${this.arives}&checkout=${this.departs}`;
-        this.$axios.get(url).then(response => {
-          this.hotels = response.data;
-          this.selectHotel(this.hotels[0])
-        }).catch(() => {
-          this.$q.notify({
-            message: 'No results found',
-            color: 'negative'
+        const url = `http://localhost:3001/api/locations/${this.search
+          .toLowerCase()
+          .replace(/\s/g, "")}/hotels?checkin=${this.arives}&checkout=${
+          this.departs
+        }`;
+        this.$axios
+          .get(url)
+          .then(response => {
+            this.hotels = response.data;
+            this.selectHotel(this.hotels[0]);
+          })
+          .catch(() => {
+            this.$q.notify({
+              message: "No results found",
+              color: "negative"
+            });
           });
-        });
       }
     },
     selectHotel(hotel) {
       this.lat = hotel.lat;
       this.lng = hotel.lng;
+    },
+    roundTo(num){
+      if(num) {
+        return `$${num.toFixed(2)}`;
+      } else {
+        return "$ ---.--"
+      }
     }
   }
 };
@@ -187,7 +229,11 @@ export default {
 
 <style>
 .hotel-scroller {
-  height: calc(100vh - 252px);
+  height: calc(100vh - 50px);
   overflow: scroll;
+}
+.input-branding {
+  font-size: 15px;
+  color: #562c5f;
 }
 </style>

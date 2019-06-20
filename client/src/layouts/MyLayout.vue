@@ -1,18 +1,5 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <!-- <q-header class="bg-white text-grey-9" bordered>
-      <q-toolbar> -->
-        <!-- <q-btn
-          flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          aria-label="Menu"
-        >
-          <q-icon name="menu" />
-        </q-btn> -->
-      <!-- </q-toolbar>
-    </q-header> -->
 
     <!-- <q-drawer v-model="leftDrawerOpen" bordered content-class="bg-grey-2">
       <q-list>
@@ -56,11 +43,11 @@ export default {
   name: "MyLayout",
   data() {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
     };
   },
   methods: {
-    openURL
+    openURL,
   }
 };
 </script>
