@@ -61,7 +61,8 @@
         <div class="row bordered"></div>
         <div class="hotel-scroller">
           <div
-            v-on:click="selectHotel(hotel)"
+            v-on:mouseover="selectHotel(hotel)"
+            v-on:click="viewHotelDetails(hotel)"
             v-ripple="{ color: 'accent' }"
             class="relative-position q-pa-md cursor-pointer row"
             v-for="(hotel, index) in hotels"
@@ -215,6 +216,19 @@ export default {
     selectHotel(hotel) {
       this.lat = hotel.lat;
       this.lng = hotel.lng;
+    },
+    viewHotelDetails(hotel){
+      let routeData = this.$router.resolve({
+        path: "/detail",
+        query: {
+          ...this.$route.query,
+          hotelId: hotel.id,
+          q: this.search,
+          arives: this.arives,
+          departs: this.departs
+        }
+      });
+      window.open(routeData.href, '_blank');
     },
     roundTo(num){
       if(num) {

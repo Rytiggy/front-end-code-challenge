@@ -40,7 +40,12 @@ module.exports = function (ctx) {
         "QImg",
         "QDate",
         "QMenu",
-        "QRating"
+        "QRating",
+        "QCarousel",
+        "QCarouselControl",
+        "QCarouselSlide",
+        "QFooter",
+        "QBadge"
       ],
 
       directives: ["Ripple"],
