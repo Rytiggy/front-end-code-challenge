@@ -14,6 +14,10 @@
 - Trip planner workflow 
 - Sort lowest to highest stars / price
 
+### Running:
+- `npm install` in the root as well as in the client folders
+- `npm start` starts both the Client and the Server
+
 Roomkey Front End Development Challenge
 ========================================
 
