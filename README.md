@@ -1,3 +1,23 @@
+## Frontend UI:
+
+![](https://media.giphy.com/media/U2MCZjKrMOvrDS2nnE/giphy.gif)
+### Current Features: 
+- Search by city between a specific time window 
+- Leaflet map view of all hotels in a specific city
+- Shareable URL link that will pull up specific results 
+- Clean UI focused on material design
+- Built UI in Quasar
+- Mobile friendly
+
+### Planned Features:
+- Hotel detail page
+- Trip planner workflow 
+- Sort lowest to highest stars / price
+
+### Running:
+- `npm install` in the root as well as in the client folders
+- `npm start` starts both the Client and the Server
+
 Roomkey Front End Development Challenge
 ========================================
 
