@@ -12,7 +12,8 @@
 
 ### Planned Features:
 - Trip planner workflow 
-- Sort lowest to highest stars / price
+- Sort lowest to highest stars/price
+- Highlight on select/hover on hotel
 
 ### Running:
 - `npm install` in the root as well as in the client folders
