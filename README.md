@@ -15,6 +15,7 @@ Live Demo: http://hotelfinder.surge.sh/#/
 - Trip planner workflow 
 - Sort lowest to highest stars/price
 - Highlight on select/hover on hotel
+- When hovering over the list of hotels show the map popups
 
 ### Running:
 - `npm install` in the root as well as in the client folders
