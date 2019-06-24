@@ -8,11 +8,12 @@
 - Clean UI focused on material design
 - Built UI in Quasar
 - Mobile friendly
+- Hotel detail page
 
 ### Planned Features:
-- Hotel detail page
 - Trip planner workflow 
-- Sort lowest to highest stars / price
+- Sort lowest to highest stars/price
+- Highlight on select/hover on hotel
 
 ### Running:
 - `npm install` in the root as well as in the client folders
