@@ -1,32 +1,43 @@
 <template>
-  <!-- <div style="height: 100%; width: 100%"> -->
-    <!-- <div class="info" style="height: 15%">
-      <span>Center: {{ center }}</span>
-      <span>Zoom: {{ zoom }}</span>
-      <span>Bounds: {{ bounds }}</span>
-    </div> -->
-    <div class="full-height">
-      <l-map
-        class="fit"
-        :zoom="zoom"
-        :center="[lat, lng]"
-        @update:zoom="zoomUpdated"
-        @update:center="centerUpdated"
-        @update:bounds="boundsUpdated"
-      >
-        <l-tile-layer :url="url"></l-tile-layer>
-        <l-marker :lat-lng="[lat, lng]">
-          <l-popup>Hello!</l-popup>
-        </l-marker>    
-        <l-marker v-for="(hotel, hotelIndex) in hotels" :key="hotelIndex" :lat-lng="[hotel.lat, hotel.lng]">
-          <l-popup>
-            <b>{{ hotel.name }}</b> 
-            <span v-if="hotel.nightly_rate"> {{roundTo(hotel.nightly_rate)}}</span>
-          </l-popup>
-        </l-marker>
-      </l-map>
-    </div>
-  <!-- </div> -->
+  <div class="full-height">
+    <l-map
+      class="fit"
+      :zoom="zoom"
+      :center="[lat, lng]"
+      @update:zoom="zoomUpdated"
+      @update:center="centerUpdated"
+      @update:bounds="boundsUpdated"
+    >
+      <l-tile-layer :url="url"></l-tile-layer>
+      <l-marker :lat-lng="[lat, lng]">
+      </l-marker>    
+      <l-marker v-for="(hotel, hotelIndex) in hotels" :key="hotelIndex" :lat-lng="[hotel.lat, hotel.lng]">
+        <l-popup>
+          <div class="row">
+            <div class="col-12 text-center">
+              <q-img :src="hotel.photos[0].url" spinner-color="white" :ratio="4/3">
+              </q-img>
+            </div>
+            <div class="col-12 q-px-sm">
+              <a href="#">
+                <div class="text-h6 text-accent ellipsis" v-on:click="viewHotelDetails(hotel)">
+                  {{ hotel.name }}
+                </div>
+              </a>
+            </div>
+            <div class="col-12 q-px-sm text-right">
+              <div v-if="roundTo(hotel.nightly_rate)" class="text-h6">
+                {{roundTo(hotel.nightly_rate)}}
+              </div>
+              <div v-else class="text-h6">
+                Not Available
+              </div>
+            </div>
+          </div>
+        </l-popup>
+      </l-marker>
+    </l-map>
+  </div>
 </template>
 
 <script>
@@ -54,8 +65,11 @@ export default {
       if(num) {
         return `$${num.toFixed(2)}`;
       } else {
-        return "$---.--"
+        return false;
       }
+    },
+    viewHotelDetails(hotel) {
+      this.$emit('viewHotelDetails', hotel)
     }
   }
 }

@@ -58,36 +58,44 @@
 
     <div class="row">
       <div class="col-sm-12 col-md-5">
-        <div class="row bordered"></div>
         <div class="hotel-scroller">
-          <div
-            v-on:mouseover="selectHotel(hotel)"
-            v-on:click="viewHotelDetails(hotel)"
-            v-ripple="{ color: 'accent' }"
-            class="relative-position q-pa-md cursor-pointer row"
-            v-for="(hotel, index) in hotels"
-            :key="index"
-          >
-            <div class="col-4 text-center">
-              <q-img :src="hotel.photos[0].url" spinner-color="white" :ratio="4/3"/>
-              <q-rating v-model="hotel.stars" size="2em" color="accent" readonly/>
-            </div>
-            <div class="col-5 q-px-sm">
-              <div>
-                <div class="text-h6 text-accent ellipsis">{{ hotel.name }}</div>
-              </div>
-            </div>
-            <div class="col-3 q-px-sm text-right">
-              <q-btn color="accent">
-                <div class="text-h6">{{roundTo(hotel.nightly_rate)}}</div>
-              </q-btn>
-            </div>
-            <q-separator inset/>
-          </div>
+          <q-list bordered separator>
+            <q-item
+              clickable
+              v-for="(hotel, index) in hotels"
+              :key="index"
+              v-on:mouseover="selectHotel(hotel, index)"
+              v-ripple="{ color: 'accent' }"
+              :active="isActive(index)"
+              active-class="text-accent"
+            >
+              <q-item-section thumbnail>
+                <q-img :src="hotel.photos[0].url" spinner-color="white" :ratio="4/3"/>
+                <q-rating :value="hotel.stars" size="2em" color="accent" readonly/>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="text-h6">{{ hotel.name }}</q-item-label>
+                <q-item-label class="text-grey-9" lines="2">{{hotel.short_description}}</q-item-label>
+              </q-item-section>
+              <q-item-section top side>
+                <div
+                  v-if="roundTo(hotel.nightly_rate)"
+                  class="text-h6"
+                >{{roundTo(hotel.nightly_rate)}}</div>
+                <div v-else class>Not Available</div>
+                <q-btn
+                  flat
+                  color="accent"
+                  class="btn-bottom"
+                  v-on:click="viewHotelDetails(hotel)"
+                >View Booking</q-btn>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </div>
       </div>
       <div class="col-md-7 gt-sm">
-        <MapView :lat="lat" :lng="lng" :hotels="hotels"/>
+        <MapView :lat="lat" :lng="lng" :hotels="hotels" @viewHotelDetails="viewHotelDetails"/>
       </div>
     </div>
   </q-page>
@@ -112,14 +120,17 @@ export default {
       cities: [],
       hotels: [],
       lat: 38.04671096801758,
-      lng: -78.48670196533203
+      lng: -78.48670196533203,
+      selectedHotelIndex: 0
     };
   },
   mounted() {
-    this.$axios.get("http://localhost:3001/api/locations/").then(response => {
-      this.mapData = response.data;
-      this.cities = this.mapData.map(city => city.name);
-    });
+    this.$axios
+      .get("https://roomkey-api.herokuapp.com/api/locations/")
+      .then(response => {
+        this.mapData = response.data;
+        this.cities = this.mapData.map(city => city.name);
+      });
     //set URL prams to values
     if (
       this.$route.query.q ||
@@ -194,7 +205,7 @@ export default {
           color: "negative"
         });
       } else {
-        const url = `http://localhost:3001/api/locations/${this.search
+        const url = `https://roomkey-api.herokuapp.com/api/locations/${this.search
           .toLowerCase()
           .replace(/\s/g, "")}/hotels?checkin=${this.arives}&checkout=${
           this.departs
@@ -203,7 +214,7 @@ export default {
           .get(url)
           .then(response => {
             this.hotels = response.data;
-            this.selectHotel(this.hotels[0]);
+            this.selectHotel(this.hotels[0], 0);
           })
           .catch(() => {
             this.$q.notify({
@@ -213,11 +224,18 @@ export default {
           });
       }
     },
-    selectHotel(hotel) {
+    isActive(index) {
+      if (index === this.selectedHotelIndex) {
+        return true;
+      }
+      return false;
+    },
+    selectHotel(hotel, index) {
+      this.selectedHotelIndex = index;
       this.lat = hotel.lat;
       this.lng = hotel.lng;
     },
-    viewHotelDetails(hotel){
+    viewHotelDetails(hotel) {
       let routeData = this.$router.resolve({
         path: "/detail",
         query: {
@@ -228,26 +246,32 @@ export default {
           departs: this.departs
         }
       });
-      window.open(routeData.href, '_blank');
+      window.open(routeData.href, "_blank");
     },
-    roundTo(num){
-      if(num) {
+    roundTo(num) {
+      if (num) {
         return `$${num.toFixed(2)}`;
       } else {
-        return "$ ---.--"
+        return false;
       }
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .hotel-scroller {
   height: calc(100vh - 50px);
   overflow: scroll;
 }
 .input-branding {
   font-size: 15px;
-  color: #562c5f;
+  color: #2981ca;
+}
+
+.btn-bottom {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
 }
 </style>
