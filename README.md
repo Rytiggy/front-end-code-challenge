@@ -1,6 +1,7 @@
 ## Frontend UI:
+Live Demo: http://hotelfinder.surge.sh/#/
 
-![](https://media.giphy.com/media/U2MCZjKrMOvrDS2nnE/giphy.gif)
+![](https://i.ibb.co/4jGcSVH/Screen-Shot-2019-06-24-at-2-39-21-PM.png)
 ### Current Features: 
 - Search by city between a specific time window 
 - Leaflet map view of all hotels in a specific city
